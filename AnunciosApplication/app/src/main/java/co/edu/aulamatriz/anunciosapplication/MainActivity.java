@@ -1,16 +1,25 @@
 package co.edu.aulamatriz.anunciosapplication;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    public final static String TABLE_NAME = "table_joke";
+    public final static String AUTHORITY = "co.example.provider.MyContentProvider";
+    private static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
+            + "/" + TABLE_NAME);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +35,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AnuncioActivity.class));
             }
         });
+
+        /*Cursor cursor = getContentResolver()
+                .query(CONTENT_URI,null, null,
+                        null, null);
+        Log.d("Main", "Cursor count: " + cursor.getCount());*/
+
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.MY_CUSTOM_ACTION");
+        intent.addCategory("android.intent.category.DEFAULT");
+        intent.putExtra("pass", "12345");
+        startActivity(intent);
     }
 
     @Override

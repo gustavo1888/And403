@@ -38,7 +38,7 @@ public class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        mValues.moveToFirst();
+        mValues.moveToPosition(position);
 
         holder.mItem = new Joke();
         holder.mItem.id = mValues.getInt(mValues.getColumnIndex(Constantes.COLUMN_SERVER_ID));

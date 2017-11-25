@@ -46,6 +46,7 @@ public class ItemFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private MyItemRecyclerViewAdapter adapter;
+    private ArrayList<Joke> jokes;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -89,7 +90,8 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adapter = new MyItemRecyclerViewAdapter(mListener);
+            jokes = new ArrayList<>();
+            adapter = new MyItemRecyclerViewAdapter(jokes, mListener);
             recyclerView.setAdapter(adapter);
         }
         return view;
@@ -142,7 +144,7 @@ public class ItemFragment extends Fragment {
                         //Logger.json(response.toString());
                         try {
                             JSONArray jsonArray = response.getJSONArray("value");
-                            ArrayList<Joke> jokes = new Gson().fromJson(jsonArray.toString(),
+                            jokes = new Gson().fromJson(jsonArray.toString(),
                                     new TypeToken<ArrayList<Joke>>(){}.getType());
                             adapter.swap(jokes);
 

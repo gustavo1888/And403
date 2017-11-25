@@ -23,8 +23,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     private final List<Joke> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyItemRecyclerViewAdapter(OnListFragmentInteractionListener listener) {
-        mValues = new ArrayList<>();
+    public MyItemRecyclerViewAdapter(ArrayList<Joke> jokes, OnListFragmentInteractionListener listener) {
+        mValues = jokes;
         mListener = listener;
     }
 
@@ -61,6 +61,10 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     public void swap(ArrayList<Joke> jokes) {
         mValues.clear();
         mValues.addAll(jokes);
+        notifyDataSetChanged();
+    }
+
+    public void swap() {
         notifyDataSetChanged();
     }
 

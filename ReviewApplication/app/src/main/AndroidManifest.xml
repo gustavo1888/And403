@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <permission android:name="co.aulamatriz.permission.CONTEN_PROV"
+    <permission
+        android:name="co.aulamatriz.permission.CONTEN_PROV"
         android:protectionLevel="normal" />
 
     <application
@@ -30,10 +31,10 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" >
-
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MY_CUSTOM_ACTION" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -42,8 +43,18 @@
             android:name=".providers.MyContentProvider"
             android:authorities="co.example.provider.MyContentProvider"
             android:enabled="true"
-            android:permission="co.aulamatriz.permission.CONTEN_PROV"
-            android:exported="false" />
+            android:exported="false"
+            android:permission="co.aulamatriz.permission.CONTEN_PROV" />
+
+        <activity
+            android:name=".ScrollingActivity"
+            android:label="@string/title_activity_scrolling"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="co.edu.aulamatriz.reviewapplication.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

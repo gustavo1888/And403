@@ -147,5 +147,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(Joke item) {
 
+        Intent intent = new Intent(this, ScrollingActivity.class);
+        intent.putExtra("model", item);
+        startActivity(intent);
     }
 }

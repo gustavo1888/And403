@@ -1,5 +1,6 @@
 package co.edu.aulamatriz.reviewapplication.fragments;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,10 +27,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import co.edu.aulamatriz.reviewapplication.R;
+import co.edu.aulamatriz.reviewapplication.adapters.CursorRecyclerViewAdapter;
+import co.edu.aulamatriz.reviewapplication.adapters.MyItemRecyclerViewAdapter;
 import co.edu.aulamatriz.reviewapplication.models.Joke;
+import co.edu.aulamatriz.reviewapplication.utilities.Constantes;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 /**
  * A fragment representing a list of Items.
@@ -45,7 +48,7 @@ public class ItemFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    private MyItemRecyclerViewAdapter adapter;
+    private CursorRecyclerViewAdapter adapter;
     private ArrayList<Joke> jokes;
 
     /**
@@ -91,7 +94,7 @@ public class ItemFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             jokes = new ArrayList<>();
-            adapter = new MyItemRecyclerViewAdapter(jokes, mListener);
+            adapter = new CursorRecyclerViewAdapter(mListener);
             recyclerView.setAdapter(adapter);
         }
         return view;
@@ -146,7 +149,27 @@ public class ItemFragment extends Fragment {
                             JSONArray jsonArray = response.getJSONArray("value");
                             jokes = new Gson().fromJson(jsonArray.toString(),
                                     new TypeToken<ArrayList<Joke>>(){}.getType());
-                            adapter.swap(jokes);
+
+                            getActivity().getContentResolver()
+                                    .delete(Constantes.CONTENT_URI, null, null);
+                            Date date = new Date();
+                            ContentValues[] contentValues = new ContentValues[jokes.size()];
+                            int count = 0;
+                            for(Joke joke : jokes){
+                                ContentValues cv = new ContentValues();
+                                cv.put(Constantes.COLUMN_SERVER_ID, joke.id);
+                                cv.put(Constantes.COLUMN_JOKE, joke.joke);
+                                contentValues[count] = cv;
+                                count++;
+                            }
+                            getActivity().getContentResolver()
+                                    .bulkInsert(Constantes.BULK_INSERT_URI, contentValues);
+                            Logger.w("Total time: %s ms", (new Date().getTime() -
+                                    date.getTime()));
+
+                            adapter.swap(getActivity().getContentResolver()
+                                .query(Constantes.CONTENT_URI,null, null,
+                                        null, null));
 
                         } catch (JSONException e) {
                             e.printStackTrace();

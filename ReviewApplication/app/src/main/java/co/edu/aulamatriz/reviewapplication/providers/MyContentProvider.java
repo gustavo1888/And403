@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import co.edu.aulamatriz.reviewapplication.databases.DBHelper;
 
@@ -61,9 +62,56 @@ public class MyContentProvider extends ContentProvider {
     }
 
     @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        String tableName = "";
+        switch (sUriMatcher.match(uri)) {
+            case DATUM_INSERT:
+                tableName = TABLE_NAME;
+                break;
+        }
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.insert(tableName, null, values);
+        return uri;
+    }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        String tableName = "";
+        switch (sUriMatcher.match(uri)) {
+            case DATUM_BULK_INSERT:
+                tableName = TABLE_NAME;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        int rows = 0;
+        db.beginTransaction();
+        try {
+            for (ContentValues value : values) {
+                db.insert(tableName, null, value);
+                rows++;
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return rows;
+    }
+
+    @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        String tableName = "";
+        switch (sUriMatcher.match(uri)) {
+            case DATUM:
+                tableName = TABLE_NAME;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.delete(tableName, selection, selectionArgs);
     }
 
     @Override
@@ -73,11 +121,7 @@ public class MyContentProvider extends ContentProvider {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    @Override
-    public Uri insert(Uri uri, ContentValues values) {
-        // TODO: Implement this to handle requests to insert a new row.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+
 
     @Override
     public int update(Uri uri, ContentValues values, String selection,

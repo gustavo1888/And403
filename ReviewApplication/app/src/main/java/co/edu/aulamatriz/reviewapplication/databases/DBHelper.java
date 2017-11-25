@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.orhanobut.logger.Logger;
+
 import co.edu.aulamatriz.reviewapplication.utilities.Constantes;
 
 /**
@@ -28,9 +30,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String query = "CREATE TABLE " + Constantes.TABLE_NAME + " ( " +
                 Constantes.COLUMN_ID + " integer PRIMARY KEY not null, " +
-                Constantes.COLUMN_SERVER_ID + "integer, " +
-                Constantes.COLUMN_JOKE + "text )";
+                Constantes.COLUMN_SERVER_ID + " integer, " +
+                Constantes.COLUMN_JOKE + " text" +
+                " )";
         db.execSQL(query);
+        Logger.d("Base de datos creada, %s", Constantes.TABLE_NAME);
     }
 
     @Override

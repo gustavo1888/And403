@@ -8,22 +8,23 @@ import android.widget.TextView;
 
 import co.edu.aulamatriz.reviewapplication.R;
 import co.edu.aulamatriz.reviewapplication.fragments.ItemFragment.OnListFragmentInteractionListener;
-import co.edu.aulamatriz.reviewapplication.fragments.dummy.DummyContent.DummyItem;
+import co.edu.aulamatriz.reviewapplication.models.Joke;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Joke} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Joke> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public MyItemRecyclerViewAdapter(OnListFragmentInteractionListener listener) {
+        mValues = new ArrayList<>();
         mListener = listener;
     }
 
@@ -37,8 +38,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText(String.valueOf(mValues.get(position).id));
+        holder.mContentView.setText(mValues.get(position).joke);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,11 +58,17 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         return mValues.size();
     }
 
+    public void swap(ArrayList<Joke> jokes) {
+        mValues.clear();
+        mValues.addAll(jokes);
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public Joke mItem;
 
         public ViewHolder(View view) {
             super(view);

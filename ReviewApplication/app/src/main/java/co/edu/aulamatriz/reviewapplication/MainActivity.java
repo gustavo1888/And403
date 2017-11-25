@@ -19,8 +19,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+
 import co.edu.aulamatriz.reviewapplication.fragments.ItemFragment;
-import co.edu.aulamatriz.reviewapplication.fragments.dummy.DummyContent;
+import co.edu.aulamatriz.reviewapplication.models.Joke;
 import co.edu.aulamatriz.reviewapplication.utilities.MyPreferences;
 
 public class MainActivity extends AppCompatActivity
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
     @Override
@@ -141,7 +145,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(Joke item) {
 
     }
 }

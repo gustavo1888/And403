@@ -10,10 +10,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import co.edu.aulamatriz.reviewapplication.R;
-import co.edu.aulamatriz.reviewapplication.fragments.dummy.DummyContent;
-import co.edu.aulamatriz.reviewapplication.fragments.dummy.DummyContent.DummyItem;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import co.edu.aulamatriz.reviewapplication.R;
+import co.edu.aulamatriz.reviewapplication.models.Joke;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +45,7 @@ public class ItemFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private MyItemRecyclerViewAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -54,6 +71,8 @@ public class ItemFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+        Logger.addLogAdapter(new AndroidLogAdapter());
+        sendRequest();
     }
 
     @Override
@@ -70,7 +89,8 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            adapter = new MyItemRecyclerViewAdapter(mListener);
+            recyclerView.setAdapter(adapter);
         }
         return view;
     }
@@ -105,6 +125,40 @@ public class ItemFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Joke item);
     }
+
+    public void sendRequest(){
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        String url ="http://api.icndb.com/jokes/random/1000";
+
+        // Request a jObj response from the provided URL.
+        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Logger.json(response.toString());
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("value");
+                            ArrayList<Joke> jokes = new Gson().fromJson(jsonArray.toString(),
+                                    new TypeToken<ArrayList<Joke>>(){}.getType());
+                            adapter.swap(jokes);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+
 }
